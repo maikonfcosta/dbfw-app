@@ -1,0 +1,21 @@
+{
+  "name": "DBFW Pro Deckbuilder",
+  "short_name": "DBFW Pro",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0a0e17",
+  "theme_color": "#0a0e17",
+  "description": "O melhor construtor de decks e base de dados para Dragon Ball Fusion World",
+  "icons": [
+    {
+      "src": "/icon.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
