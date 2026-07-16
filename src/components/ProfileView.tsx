@@ -1,14 +1,15 @@
 import React from 'react';
-import { User, Settings2, Download, Trash2, Moon, Database } from 'lucide-react';
+import { User, Settings2, Download, Trash2, Moon, Database, ShieldAlert } from 'lucide-react';
 import './ProfileView.css';
 
 interface ProfileViewProps {
   deckCount: number;
   onClearDeck: () => void;
   onExportDeck: () => void;
+  onViewBanlist: () => void;
 }
 
-export const ProfileView: React.FC<ProfileViewProps> = ({ deckCount, onClearDeck, onExportDeck }) => {
+export const ProfileView: React.FC<ProfileViewProps> = ({ deckCount, onClearDeck, onExportDeck, onViewBanlist }) => {
   return (
     <div className="profile-container">
       <div className="profile-header-card">
@@ -31,6 +32,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ deckCount, onClearDeck
             Cartas no Deck Atual
           </div>
           <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>{deckCount}</span>
+        </div>
+
+        <div className="setting-row">
+          <div className="setting-label">
+            Ver Banlist Oficial
+          </div>
+          <button className="action-btn" onClick={onViewBanlist}>
+            <ShieldAlert size={16} /> Ver Lista
+          </button>
         </div>
 
         <div className="setting-row">

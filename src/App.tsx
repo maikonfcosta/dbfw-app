@@ -9,6 +9,7 @@ import type { SavedDeck } from './components/DeckList';
 import { ViewDeckModal } from './components/ViewDeckModal';
 import { useDialog } from './components/DialogContext';
 import { AutoDeckWizard } from './components/AutoDeckWizard';
+import { BanlistViewModal } from './components/BanlistViewModal';
 import { BANNED_CARDS, RESTRICTED_CARDS } from './data/banlist';
 import './App.css';
 
@@ -41,6 +42,7 @@ function App() {
   
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showAutoWizard, setShowAutoWizard] = useState(false);
+  const [showBanlistModal, setShowBanlistModal] = useState(false);
   
   const [deck, setDeck] = useState<Record<string, number>>(() => {
     const saved = localStorage.getItem('dbfw_pro_deck_v2');
@@ -430,9 +432,10 @@ function App() {
         
         {activeTab === 'profile' ? (
           <ProfileView 
-            deckCount={totalCardsInDeck} 
-            onClearDeck={handleClearDeck} 
-            onExportDeck={handleExportDeck} 
+            deckCount={totalCardsInDeck}
+            onClearDeck={handleClearDeck}
+            onExportDeck={handleExportDeck}
+            onViewBanlist={() => setShowBanlistModal(true)}
           />
         ) : activeTab === 'decks' && !isBuildingDeck ? null : (
           <>
@@ -544,6 +547,13 @@ function App() {
           dbfwData={dbfwData}
           onClose={() => setShowAutoWizard(false)}
           onComplete={handleAutoDeckGenerated}
+        />
+      )}
+
+      {showBanlistModal && (
+        <BanlistViewModal
+          dbfwData={dbfwData}
+          onClose={() => setShowBanlistModal(false)}
         />
       )}
     </div>
