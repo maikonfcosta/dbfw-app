@@ -1,15 +1,12 @@
 import React from 'react';
-import { User, Settings2, Download, Trash2, Moon, Database, ShieldAlert } from 'lucide-react';
+import { User, Settings2, Moon, ShieldAlert } from 'lucide-react';
 import './ProfileView.css';
 
 interface ProfileViewProps {
-  deckCount: number;
-  onClearDeck: () => void;
-  onExportDeck: () => void;
   onViewBanlist: () => void;
 }
 
-export const ProfileView: React.FC<ProfileViewProps> = ({ deckCount, onClearDeck, onExportDeck, onViewBanlist }) => {
+export const ProfileView: React.FC<ProfileViewProps> = ({ onViewBanlist }) => {
   return (
     <div className="profile-container">
       <div className="profile-header-card">
@@ -24,16 +21,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ deckCount, onClearDeck
 
       <div className="settings-section">
         <h3 className="settings-title">
-          <Database size={20} /> Base de Dados e Deck
+          <Settings2 size={20} /> Preferências do App
         </h3>
         
-        <div className="setting-row">
-          <div className="setting-label">
-            Cartas no Deck Atual
-          </div>
-          <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>{deckCount}</span>
-        </div>
-
         <div className="setting-row">
           <div className="setting-label">
             Ver Banlist Oficial
@@ -43,30 +33,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ deckCount, onClearDeck
           </button>
         </div>
 
-        <div className="setting-row">
-          <div className="setting-label">
-            Exportar Deck
-          </div>
-          <button className="action-btn" onClick={onExportDeck}>
-            <Download size={16} /> Copiar Código
-          </button>
-        </div>
-
-        <div className="setting-row">
-          <div className="setting-label">
-            Limpar Deck
-          </div>
-          <button className="action-btn danger" onClick={onClearDeck}>
-            <Trash2 size={16} /> Apagar Tudo
-          </button>
-        </div>
-      </div>
-
-      <div className="settings-section">
-        <h3 className="settings-title">
-          <Settings2 size={20} /> Preferências do App
-        </h3>
-        
         <div className="setting-row">
           <div className="setting-label">
             <Moon size={18} /> Tema Escuro (Glassmorphism)

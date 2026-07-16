@@ -162,8 +162,6 @@ function App() {
   const visibleCards = allFilteredCards.slice(0, visibleCount);
   const hasMore = visibleCount < allFilteredCards.length;
 
-  const totalCardsInDeck = Object.values(deck).reduce((acc, curr) => acc + curr, 0);
-
   const toggleColor = (color: string) => setActiveColor(prev => prev === color ? null : color);
   const toggleType = (type: string) => setActiveType(prev => prev === type ? null : type);
   const toggleCost = (cost: string) => setActiveCost(prev => prev === cost ? null : cost);
@@ -193,12 +191,6 @@ function App() {
         newDeck[card.id] = quantity;
       }
       return newDeck;
-    });
-  };
-
-  const handleClearDeck = () => {
-    showConfirm('Tem certeza que deseja apagar o seu Deck em edição?', () => {
-      setDeck({});
     });
   };
 
@@ -276,12 +268,6 @@ function App() {
       setDeck({});
       setDraftDeckId(null);
     });
-  };
-
-  const handleExportDeck = () => {
-    const exportData = JSON.stringify(deck);
-    navigator.clipboard.writeText(exportData);
-    showAlert('Deck copiado para a área de transferência! (Formato JSON)', 'Copiado', 'success');
   };
 
   if (isLoading) {
@@ -432,9 +418,6 @@ function App() {
         
         {activeTab === 'profile' ? (
           <ProfileView 
-            deckCount={totalCardsInDeck}
-            onClearDeck={handleClearDeck}
-            onExportDeck={handleExportDeck}
             onViewBanlist={() => setShowBanlistModal(true)}
           />
         ) : activeTab === 'decks' && !isBuildingDeck ? null : (
