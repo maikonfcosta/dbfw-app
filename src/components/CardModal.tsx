@@ -75,7 +75,7 @@ export const CardModal: React.FC<CardModalProps> = ({ card, onClose, quantityInD
                   className={`flip-btn ${!isFlipped ? 'active' : ''}`}
                   onClick={() => setIsFlipped(false)}
                 >
-                  Front
+                  Base
                 </button>
                 <button 
                   className={`flip-btn ${isFlipped ? 'active' : ''}`}

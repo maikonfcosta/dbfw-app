@@ -13,10 +13,11 @@ interface CardProps {
     type: string;
   };
   onClick: (card: any) => void;
+  quantity?: number;
 }
 
 // React.memo previne re-renderizações desnecessárias das cartas quando o usuário digita na busca
-export const DbfwCard: React.FC<CardProps> = React.memo(({ card, onClick }) => {
+export const DbfwCard: React.FC<CardProps> = React.memo(({ card, onClick, quantity }) => {
   return (
     <motion.div 
       className="card-wrapper"
@@ -27,6 +28,9 @@ export const DbfwCard: React.FC<CardProps> = React.memo(({ card, onClick }) => {
       onClick={() => onClick(card)}
     >
       <img src={card.image} alt={card.name} className="card-image" loading="lazy" />
+      {quantity !== undefined && quantity > 0 && (
+        <div className="view-deck-badge">{quantity}</div>
+      )}
       <div className="card-overlay">
         <span className="card-name">{card.name}</span>
         <div className="card-meta">
@@ -39,5 +43,5 @@ export const DbfwCard: React.FC<CardProps> = React.memo(({ card, onClick }) => {
   );
 }, (prevProps, nextProps) => {
   // Comparações rasas otimizadas
-  return prevProps.card.id === nextProps.card.id;
+  return prevProps.card.id === nextProps.card.id && prevProps.quantity === nextProps.quantity;
 });
