@@ -9,5 +9,9 @@ export const BANNED_CARDS: string[] = [
 ];
 
 export const RESTRICTED_CARDS: string[] = [
-  // Nenhuma carta restrita no momento (Kefla FB02-013 teve a restrição removida)
+  'FB04-085', // Babidi
+  'FB04-094', // Majin Buu : Kid
+  'FB04-095', // Majin Buu : Kid
+  'SB01-011', // Cell
+  'SB01-015', // Self-Destruct
 ];
