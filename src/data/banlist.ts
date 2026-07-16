@@ -3,9 +3,11 @@
 // RESTRICTED_CARDS: Cartas limitadas a 1 cópia por deck
 
 export const BANNED_CARDS: string[] = [
-  // Exemplo de IDs de cartas banidas: 'FB01-015'
+  'FB01-056', // Pilaf
+  'FB01-005', // Master Roshi
+  'FB02-031'  // Ribrianne
 ];
 
 export const RESTRICTED_CARDS: string[] = [
-  // Exemplo de IDs de cartas restritas: 'FB01-039'
+  // Nenhuma carta restrita no momento (Kefla FB02-013 teve a restrição removida)
 ];
