@@ -3,6 +3,7 @@ import { X, Wand2, Key, Loader2, Trash2, Sparkles, Copy, Share2 } from 'lucide-r
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import ReactMarkdown from 'react-markdown';
 import { BANNED_CARDS, RESTRICTED_CARDS } from '../data/banlist';
+import { useDialog } from './DialogContext';
 import './DeckAnalyzerModal.css';
 
 interface DeckAnalyzerModalProps {
@@ -19,6 +20,7 @@ export function DeckAnalyzerModal({ deck, dbfwData, onClose, onUpdateDeck }: Dec
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isAdjusting, setIsAdjusting] = useState(false);
   const [error, setError] = useState('');
+  const { showAlert } = useDialog();
 
   useEffect(() => {
     const savedKey = localStorage.getItem('gemini_api_key');
@@ -127,8 +129,8 @@ Responda em português do Brasil, usando formatação Markdown (com títulos, li
 
   const handleCopy = () => {
     navigator.clipboard.writeText(analysis)
-      .then(() => alert('Relatório copiado para a área de transferência!'))
-      .catch(() => alert('Erro ao copiar relatório.'));
+      .then(() => showAlert('Relatório copiado para a área de transferência!', 'Copiado', 'success'))
+      .catch(() => showAlert('Erro ao copiar relatório.'));
   };
 
   const handleShare = () => {
@@ -207,7 +209,7 @@ NÃO RETORNE TEXTO NENHUM ANTES NEM DEPOIS DO JSON. NÃO USE BLOCOS \`\`\`json. 
       const parsed = JSON.parse(jsonStr);
       if (parsed && parsed.cards) {
         onUpdateDeck(parsed.cards);
-        alert('Seu deck foi atualizado magicamente pela IA!');
+        showAlert('Seu deck foi atualizado magicamente pela IA!', 'Sucesso', 'success');
         onClose(); // Fechar o modal após atualizar
       } else {
         throw new Error("Formato JSON inválido.");
