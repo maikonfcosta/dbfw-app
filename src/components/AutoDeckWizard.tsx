@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, ChevronRight, ChevronLeft, Check, Wand2 } from 'lucide-react';
+import { BANNED_CARDS, RESTRICTED_CARDS } from '../data/banlist';
 import './AutoDeckWizard.css';
 
 interface AutoDeckWizardProps {
@@ -51,8 +52,8 @@ export function AutoDeckWizard({ dbfwData, onClose, onComplete }: AutoDeckWizard
       // 1. Adiciona Líder (apenas 1)
       cards[selectedLeader.id] = 1;
 
-      // Pool de cartas permitidas (da mesma cor e não líderes)
-      const pool = dbfwData.filter(c => c.color === selectedColor && c.type !== 'LEADER');
+      // Pool de cartas permitidas (da mesma cor e não líderes, e não banidas)
+      const pool = dbfwData.filter(c => c.color === selectedColor && c.type !== 'LEADER' && !BANNED_CARDS.includes(c.id));
       
       // Identificar Super Combos
       // Regra geral de Super Combo no JSON: Traits tem 'Super Combo' ou cost é 0 e combo_power 10000, ou é uma tag especial
@@ -108,12 +109,15 @@ export function AutoDeckWizard({ dbfwData, onClose, onComplete }: AutoDeckWizard
           const rIndex = Math.floor(Math.random() * currentPool.length);
           const card = currentPool[rIndex];
           
-          const maxAdd = Math.min(4, needed, 50 - cardsAdded);
+          const isRestricted = RESTRICTED_CARDS.includes(card.id);
+          const maxAllowed = isRestricted ? 1 : 4;
+          const maxAdd = Math.min(maxAllowed, needed, 50 - cardsAdded);
+          
           cards[card.id] = (cards[card.id] || 0) + maxAdd;
           needed -= maxAdd;
           cardsAdded += maxAdd;
           
-          // Remove from pool to prevent adding more than 4 copies in total
+          // Remove from pool to prevent adding more than allowed copies in total
           currentPool.splice(rIndex, 1);
         }
       }
@@ -125,8 +129,11 @@ export function AutoDeckWizard({ dbfwData, onClose, onComplete }: AutoDeckWizard
         const card = fallbackPool[rIndex];
         const currentQty = cards[card.id] || 0;
         
-        if (currentQty < 4) {
-          const addAmt = Math.min(4 - currentQty, 50 - cardsAdded);
+        const isRestricted = RESTRICTED_CARDS.includes(card.id);
+        const maxAllowed = isRestricted ? 1 : 4;
+        
+        if (currentQty < maxAllowed) {
+          const addAmt = Math.min(maxAllowed - currentQty, 50 - cardsAdded);
           cards[card.id] = currentQty + addAmt;
           cardsAdded += addAmt;
         }

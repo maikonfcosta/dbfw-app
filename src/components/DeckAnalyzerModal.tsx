@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Wand2, Key, Loader2, Trash2, Sparkles, Copy, Share2 } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import ReactMarkdown from 'react-markdown';
+import { BANNED_CARDS, RESTRICTED_CARDS } from '../data/banlist';
 import './DeckAnalyzerModal.css';
 
 interface DeckAnalyzerModalProps {
@@ -83,6 +84,7 @@ Por favor, faça uma análise detalhada deste deck abordando obrigatoriamente os
 2. **Pontos Fortes (Sinergias):** Quais cartas combam melhor entre si e quais são as maiores vantagens do deck.
 3. **Fraquezas:** Quais matchups ou situações podem ser difíceis para este deck e por que.
 4. **Dicas de Mulligan:** Quais cartas eu devo sempre buscar manter na mão inicial.
+5. **Regras e Banlist:** Verifique se o deck possui no máximo 4 cópias da mesma carta e no máximo 4 cartas com [Super Combo]. Além disso, verifique a Banlist oficial (Cartas Banidas: ${BANNED_CARDS.length > 0 ? BANNED_CARDS.join(', ') : 'Nenhuma'} | Cartas Restritas a 1 cópia: ${RESTRICTED_CARDS.length > 0 ? RESTRICTED_CARDS.join(', ') : 'Nenhuma'}). Avise se o deck for ilegal.
 
 Responda em português do Brasil, usando formatação Markdown (com títulos, listas e negritos) para deixar a leitura agradável e direta. Não precisa inventar regras, use seu conhecimento das mecânicas de jogos de cartas e da estrutura do DBFW baseada nos status/efeitos listados.`;
 
@@ -161,8 +163,11 @@ Responda em português do Brasil, usando formatação Markdown (com títulos, li
       const adjustPrompt = `Você analisou o deck "${deck.name}" e propôs melhorias (removendo cartas mortas, consertando o limite de 4 super combos, adicionando opções de maior impacto, etc).
 Agora, atue como um bot de auto-correção e gere a NOVA LISTA de cartas completa baseada nas suas próprias recomendações.
 O deck precisa ter exatamente 1 Líder e entre 50 a 60 cartas no total. Limite de no máximo 4 cópias da mesma carta. Máximo de 4 Super Combos totais.
+Respeite também a Banlist oficial: 
+- Cartas Banidas (0 cópias permitidas): ${BANNED_CARDS.length > 0 ? BANNED_CARDS.join(', ') : 'Nenhuma'}
+- Cartas Restritas (máx 1 cópia): ${RESTRICTED_CARDS.length > 0 ? RESTRICTED_CARDS.join(', ') : 'Nenhuma'}
 
-Para te ajudar, aqui está o catálogo de cartas que você pode usar (todas as cartas da cor do líder):
+Para te ajudar, aqui está o catálogo de cartas que você pode usar (todas as cartas da cor do líder, use de todas as coleções listadas aqui):
 ${JSON.stringify(validCards)}
 
 Retorne EXCLUSIVAMENTE um objeto JSON válido representando o novo deck no seguinte formato (substituindo os dados):

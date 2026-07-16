@@ -9,6 +9,7 @@ import type { SavedDeck } from './components/DeckList';
 import { ViewDeckModal } from './components/ViewDeckModal';
 import { useDialog } from './components/DialogContext';
 import { AutoDeckWizard } from './components/AutoDeckWizard';
+import { BANNED_CARDS, RESTRICTED_CARDS } from './data/banlist';
 import './App.css';
 
 const COLORS = ['Red', 'Blue', 'Green', 'Yellow', 'Black'];
@@ -171,6 +172,17 @@ function App() {
   const handleLoadMore = () => setVisibleCount(prev => prev + PAGE_SIZE);
 
   const updateDeckCard = (card: any, quantity: number) => {
+    if (quantity > 0) {
+      if (BANNED_CARDS.includes(card.id)) {
+        showAlert(`A carta ${card.name} (${card.id}) está banida e não pode ser adicionada ao deck.`);
+        return;
+      }
+      if (RESTRICTED_CARDS.includes(card.id) && quantity > 1) {
+        showAlert(`A carta ${card.name} (${card.id}) é restrita. Você só pode ter 1 cópia dela no deck.`);
+        return;
+      }
+    }
+
     setDeck(prev => {
       const newDeck = { ...prev };
       if (quantity <= 0) {
