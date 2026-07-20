@@ -12,6 +12,8 @@ import { AutoDeckWizard } from './components/AutoDeckWizard';
 import { ManualDeckWizard } from './components/ManualDeckWizard';
 import { BanlistViewModal } from './components/BanlistViewModal';
 import { BANNED_CARDS, RESTRICTED_CARDS } from './data/banlist';
+import { LeaksFeed } from './components/LeaksFeed';
+import { Flame } from 'lucide-react';
 import './App.css';
 
 const COLORS = ['Red', 'Blue', 'Green', 'Yellow', 'Black'];
@@ -22,7 +24,7 @@ const COMBOS = ['0', '5000', '10000'];
 const KEYWORDS = ['Blocker', 'Critical', 'Double Strike', 'Super Combo', 'On Play', 'Permanent', 'Auto', 'Activate:Main', 'Activate:Battle'];
 const PAGE_SIZE = 50;
 
-type TabType = 'home' | 'decks' | 'profile';
+type TabType = 'home' | 'decks' | 'profile' | 'leaks';
 
 function App() {
   const { showAlert, showConfirm } = useDialog();
@@ -300,10 +302,10 @@ function App() {
     <div className="app-container">
       <header className="top-header glass-panel">
         <h1 className="header-title">
-          {activeTab === 'decks' ? (isBuildingDeck ? 'Editando Deck' : 'Meus Decks') : activeTab === 'profile' ? 'Perfil' : 'DBFW'} <span>Pro</span>
+          {activeTab === 'decks' ? (isBuildingDeck ? 'Editando Deck' : 'Meus Decks') : activeTab === 'profile' ? 'Perfil' : activeTab === 'leaks' ? 'Leaks' : 'DBFW'} <span>Pro</span>
         </h1>
         
-        {activeTab !== 'profile' && !(activeTab === 'decks' && !isBuildingDeck) && (
+        {activeTab !== 'profile' && activeTab !== 'leaks' && !(activeTab === 'decks' && !isBuildingDeck) && (
           <>
             <div className="search-bar-container">
               <Search className="search-icon" size={20} />
@@ -436,6 +438,8 @@ function App() {
           <ProfileView 
             onViewBanlist={() => setShowBanlistModal(true)}
           />
+        ) : activeTab === 'leaks' ? (
+          <LeaksFeed />
         ) : activeTab === 'decks' && !isBuildingDeck ? null : (
           <>
             {activeTab === 'decks' && isBuildingDeck ? (
@@ -470,7 +474,7 @@ function App() {
         )}
       </main>
 
-      {hasMore && activeTab !== 'profile' && !(activeTab === 'decks' && !isBuildingDeck) && (
+      {hasMore && activeTab !== 'profile' && activeTab !== 'leaks' && !(activeTab === 'decks' && !isBuildingDeck) && (
         <div style={{ display: 'flex', justifyContent: 'center', margin: '32px 0 64px 0' }}>
           <button 
             onClick={handleLoadMore}
@@ -500,6 +504,15 @@ function App() {
         >
           <Library size={24} />
           <span>Decks</span>
+        </a>
+        <a 
+          href="#" 
+          aria-label="Spoilers & Leaks"
+          className={`nav-item ${activeTab === 'leaks' ? 'active' : ''}`}
+          onClick={(e) => { e.preventDefault(); setActiveTab('leaks'); }}
+        >
+          <Flame size={24} />
+          <span>Leaks</span>
         </a>
         <a 
           href="#" 
