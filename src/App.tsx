@@ -9,6 +9,7 @@ import type { SavedDeck } from './components/DeckList';
 import { ViewDeckModal } from './components/ViewDeckModal';
 import { useDialog } from './components/DialogContext';
 import { AutoDeckWizard } from './components/AutoDeckWizard';
+import { ManualDeckWizard } from './components/ManualDeckWizard';
 import { BanlistViewModal } from './components/BanlistViewModal';
 import { BANNED_CARDS, RESTRICTED_CARDS } from './data/banlist';
 import './App.css';
@@ -24,7 +25,7 @@ const PAGE_SIZE = 50;
 type TabType = 'home' | 'decks' | 'profile';
 
 function App() {
-  const { showAlert, showConfirm, showPrompt } = useDialog();
+  const { showAlert, showConfirm } = useDialog();
   const [dbfwData, setDbfwData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -42,6 +43,7 @@ function App() {
   
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showAutoWizard, setShowAutoWizard] = useState(false);
+  const [showManualWizard, setShowManualWizard] = useState(false);
   const [showBanlistModal, setShowBanlistModal] = useState(false);
   
   const [deck, setDeck] = useState<Record<string, number>>(() => {
@@ -121,9 +123,11 @@ function App() {
   const allFilteredCards = useMemo(() => {
     let result = dbfwData;
 
-    if (activeTab === 'decks' && isBuildingDeck) {
-      result = result.filter(card => deck[card.id] > 0);
-    }
+    // Removido o filtro que forçava a mostrar apenas cartas do deck,
+    // pois agora queremos que o usuário veja todas as cartas da cor selecionada para adicionar.
+    // if (activeTab === 'decks' && isBuildingDeck) {
+    //   result = result.filter(card => deck[card.id] > 0);
+    // }
 
     if (activeColor) result = result.filter(card => card.color === activeColor);
     if (activeType) result = result.filter(card => card.type === activeType);
@@ -195,14 +199,26 @@ function App() {
   };
 
   const handleCreateDeck = () => {
-    showPrompt('Nome do novo deck:', (name) => {
-      if (name) {
-        setDraftDeckName(name);
-        setDraftDeckId(null);
-        setDeck({});
-        setIsBuildingDeck(true);
-      }
-    }, 'Novo Deck', 'Novo Deck');
+    setShowManualWizard(true);
+  };
+
+  const handleManualDeckStarted = (name: string, leaderCard: any) => {
+    setDraftDeckName(name);
+    setDraftDeckId(null);
+    setDeck({ [leaderCard.id]: 1 });
+    
+    // Travar na cor do líder e limpar a busca para o usuário focar nas cartas corretas
+    setActiveColor(leaderCard.color);
+    setSearchTerm('');
+    setActiveType(null);
+    setActiveCost(null);
+    setActivePower(null);
+    setActiveCombo(null);
+    setActiveSeries(null);
+    setActiveKeyword(null);
+    
+    setIsBuildingDeck(true);
+    setShowManualWizard(false);
   };
 
   const handleAutoDeckGenerated = (name: string, generatedCards: Record<string, number>) => {
@@ -424,20 +440,10 @@ function App() {
           <>
             {activeTab === 'decks' && isBuildingDeck ? (
               <>
-                <div style={{ gridColumn: '1 / -1', marginBottom: '0px' }}>
-                  <h4 style={{ color: 'var(--text)', borderBottom: '2px solid var(--accent)', paddingBottom: '4px', marginBottom: '12px' }}>Líder</h4>
-                </div>
-                {visibleCards.filter(c => c.type === 'LEADER').map(card => (
-                  <DbfwCard key={card.id} card={card} onClick={setSelectedCard} quantity={deck[card.id]} />
-                ))}
-                {visibleCards.filter(c => c.type === 'LEADER').length === 0 && (
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>Nenhum Líder selecionado.</span>
-                  </div>
-                )}
-                
                 <div style={{ gridColumn: '1 / -1', marginTop: '8px', marginBottom: '8px' }}>
-                  <h4 style={{ color: 'var(--text)', borderBottom: '2px solid var(--accent)', paddingBottom: '4px' }}>Main Deck</h4>
+                  <h4 style={{ color: 'var(--text)', borderBottom: '2px solid var(--accent)', paddingBottom: '4px' }}>
+                    Cartas Disponíveis (Toque para Adicionar/Remover)
+                  </h4>
                 </div>
                 {visibleCards.filter(c => c.type !== 'LEADER').map(card => (
                   <DbfwCard key={card.id} card={card} onClick={setSelectedCard} quantity={deck[card.id]} />
@@ -530,6 +536,14 @@ function App() {
           dbfwData={dbfwData}
           onClose={() => setShowAutoWizard(false)}
           onComplete={handleAutoDeckGenerated}
+        />
+      )}
+
+      {showManualWizard && (
+        <ManualDeckWizard 
+          dbfwData={dbfwData}
+          onClose={() => setShowManualWizard(false)}
+          onComplete={handleManualDeckStarted}
         />
       )}
 
